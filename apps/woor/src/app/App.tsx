@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -11,10 +11,26 @@ import {
   Linking,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import messaging from '@react-native-firebase/messaging';
+
+async function requestUserPermission() {
+  const authStatus = await messaging().requestPermission();
+  const enabled =
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+  if (enabled) {
+    console.log('Authorization status:', authStatus);
+  }
+}
 
 export const App = () => {
   const [whatsNextYCoord, setWhatsNextYCoord] = useState<number>(0);
   const scrollViewRef = useRef<null | ScrollView>(null);
+
+  useEffect(() => {
+    requestUserPermission();
+  }, []);
 
   return (
     <>
